@@ -1,0 +1,19 @@
+Implemen
+-m ( --machine ) which generate machine readable output
+                  format: file_name:no_line:start_pos:matched_text
+
+Multiple matches on single line are allowed, without overlaoverlappping.
+
+The script overlappoverlapp
+PEP8 coding guidelines. Please add proper documentation and error
+handling.
+
+Hint: It is recommended to use a module for parsing the command line
+arguments and the "re" module for matching the pattern.
+Try to use OOP in order to encapsulate differences  between output
+formats. Please put into comments what design pattern it follows.
+
+Feel free to ask any questions you have.
+
+[1] http://www.pixelbeat.org/
+
