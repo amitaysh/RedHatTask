@@ -5,7 +5,7 @@ lala
 
 import cmd_parsing
 import re_handling
-import custom_print
+import print_results
 import fileinput
 
 
@@ -14,13 +14,13 @@ class Task(object):
         self.parsed_elements = None
         self.regex = None
         self.results = list()
-# no point going over input before verifying regex is ok
 
     def run_task(self):
         self.parsed_elements = cmd_parsing.CmdParsing()
         self.regex = re_handling.ReHandling(self.parsed_elements.args.regex)
         self._search_input()
-        custom_print.CustomPrint(self.results, self.parsed_elements.args)
+        object_type = print_results.DefineType(self.results).find_type(self.parsed_elements.args)
+        object_type.custom_print()
 
     def _search_input(self):
         for line in fileinput.input(files=self.parsed_elements.args.files_names, mode='r'):

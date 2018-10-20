@@ -4,28 +4,49 @@ lala
 """
 
 
-class CustomPrint(object):
-    def __init__(self, results, flags):
+class DefineType(object):
+    def __init__(self, results):
         self._results = results
         self.base_string = 'File Name: {0}. Line Number: {1}. Matching Line: {2}'
-        if flags.underscore:
-            self._underscore_print()
-        elif flags.color:
-            self._color_print()
-        elif flags.machine:
-            self._machine_print()
-        else:
-            self._regular_print()
 
-    def _underscore_print(self):
+    def find_type(self, flags):
+        if flags.underscore:
+            return UnderscorePrint(self._results)
+        elif flags.color:
+            return ColorPrint(self._results)
+        elif flags.machine:
+            return MachinePrint(self._results)
+        else:
+            return DefineType(self._results)
+
+    def custom_print(self):
+        duplicated_line_number = -1
+        for res in self._results:
+            if duplicated_line_number is not res['no_line']:
+                print self.base_string.format(res['filename'], res['no_line'], res['line'])
+            duplicated_line_number = res['no_line']
+
+
+class UnderscorePrint(DefineType):
+    def __init__(self, results):
+        super(UnderscorePrint, self).__init__(results)
+
+    def custom_print(self):
         for res in self._results:
             temp_str = self.base_string.format(res['filename'], res['no_line'], res['line'])
-            current_match_location = len(self.base_string) + res['start_pos']
+            current_match_location = len(self.base_string.format(res['filename'], res['no_line'], '')) + res['start_pos']
             index = temp_str.find(res['matched_text'], current_match_location)
+            if index == -1:
+                continue
             print temp_str
             print ''.ljust(index) + '^' * len(res['matched_text'])
 
-    def _color_print(self):
+
+class ColorPrint(DefineType):
+    def __init__(self, results):
+        super(ColorPrint, self).__init__(results)
+
+    def custom_print(self):
         for res in self._results:
             color_text = '\033[94m' + res['matched_text'] + '\033[0m'
             start_pos = res['start_pos']
@@ -36,15 +57,12 @@ class CustomPrint(object):
                          res['line'][rest_line:]
             print self.base_string.format(res['filename'], res['no_line'], fixed_line)
 
-    def _machine_print(self):
+
+class MachinePrint(DefineType):
+    def __init__(self, results):
+        super(MachinePrint, self).__init__(results)
+
+    def custom_print(self):
         for res in self._results:
             print '{0}:{1}:{2}:{3}'.format(res['filename'], res['no_line'], res['start_pos'], res['matched_text'])
             # or if meant to print the whole line - just change res['matched_text'] to res['line'] in previous line
-
-    def _regular_print(self):
-        duplicated_line_number = -1
-        for res in self._results:
-            if duplicated_line_number is not res['no_line']:
-                print self.base_string.format(res['filename'], res['no_line'], res['line'])
-            duplicated_line_number = res['no_line']
-
