@@ -43,7 +43,10 @@ class Task(object):
         output_type.print_output(self.results)
 
     def _search_input(self):
-        """Go over input line-by-line, file-by-file and perform regex search on it, append results for later use"""
+        """
+        Go over input line-by-line, file-by-file and perform regex search on it, append results for later use.
+        Using built-in function 'fileinput' which brings input from file(s) if given, or stdin if empty or '-'
+        """
         try:
             for line in fileinput.input(files=self.parsed_elements.args.files_names, mode='r'):
                 res = self.regex.search_regex_in_data(line)
